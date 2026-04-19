@@ -2,6 +2,7 @@
 
 import { Reorder, useDragControls } from "framer-motion";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { extractDominantHexesFromFile } from "@/lib/extractImagePalette";
 import { generatePalette, hexToHsl, hexToRgb, hslToHex, rgbToHex } from "@/lib/colorPalette";
 import { ColorTheoryPanel } from "@/components/generator/ColorTheoryPanel";
 import { colorDisplayName, readableTextOn } from "@/lib/colorDisplayName";
@@ -86,6 +87,8 @@ export function CoolorsPaletteGenerator({ className }: CoolorsPaletteGeneratorPr
   const [detail, setDetail] = useState<DetailState | null>(null);
   const [theoryOpen, setTheoryOpen] = useState(false);
   const [theorySession, setTheorySession] = useState(0);
+  const [logoBusy, setLogoBusy] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const swatchesRef = useRef<Swatch[]>(swatches);
 
   const [reorderAxis, setReorderAxis] = useState<"x" | "y">("x");
@@ -236,6 +239,42 @@ export function CoolorsPaletteGenerator({ className }: CoolorsPaletteGeneratorPr
 
   const allLocked = swatches.length > 0 && swatches.every((s) => s.locked);
 
+  const applyPaletteFromImage = useCallback(
+    async (file: File) => {
+      setLogoBusy(true);
+      try {
+        const n = Math.min(MAX_SWATCHES, Math.max(MIN_SWATCHES, swatches.length));
+        const hexes = await extractDominantHexesFromFile(file, n);
+        setSwatches(
+          hexes.map((hex) => ({
+            id: newId(),
+            hex,
+            name: colorDisplayName(hex),
+            locked: false,
+            favorited: false,
+            flexGrow: 1,
+          })),
+        );
+        setDetail(null);
+        showToast("Brand colors from your image");
+      } catch {
+        showToast("Could not read that image");
+      } finally {
+        setLogoBusy(false);
+      }
+    },
+    [showToast, swatches.length],
+  );
+
+  const onLogoFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      if (file) void applyPaletteFromImage(file);
+    },
+    [applyPaletteFromImage],
+  );
+
   return (
     <div className={`relative flex min-h-0 flex-col bg-zinc-950 text-zinc-100 ${className ?? "h-[100dvh]"}`}>
       <header className="relative shrink-0 border-b border-white/[0.08] bg-gradient-to-b from-zinc-900/95 to-zinc-950">
@@ -258,12 +297,16 @@ export function CoolorsPaletteGenerator({ className }: CoolorsPaletteGeneratorPr
                   ·
                 </span>
                 Hover a swatch for actions
+                <span className="mx-2 text-zinc-600" aria-hidden>
+                  ·
+                </span>
+                <span className="text-zinc-500">From image</span> for brand colours
               </span>
               <span className="min-[420px]:hidden">
                 <kbd className="rounded border border-zinc-600 bg-zinc-900 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-zinc-200">
                   Space
                 </kbd>{" "}
-                shuffle · swatch tools
+                shuffle · image → brand
               </span>
             </p>
           </div>
@@ -271,6 +314,30 @@ export function CoolorsPaletteGenerator({ className }: CoolorsPaletteGeneratorPr
             className="flex flex-wrap items-center justify-center gap-2 sm:justify-end"
             aria-label="Global palette actions"
           >
+            <input
+              ref={logoInputRef}
+              type="file"
+              className="sr-only"
+              accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/avif,image/svg+xml"
+              onChange={onLogoFileChange}
+              aria-label="Choose image file for brand palette"
+              tabIndex={-1}
+            />
+            <button
+              type="button"
+              disabled={logoBusy}
+              aria-busy={logoBusy}
+              aria-label="Upload a logo or image to build a brand palette from its colours"
+              title="Upload a logo or image — columns become a brand palette from its colours"
+              onClick={() => logoInputRef.current?.click()}
+              className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/35 bg-cyan-500/10 px-3 py-2 text-[11px] font-medium text-cyan-100 transition-colors hover:border-cyan-400/45 hover:bg-cyan-500/16 disabled:cursor-wait disabled:opacity-60 sm:px-3.5 sm:text-xs"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="hidden min-[380px]:inline">{logoBusy ? "Reading…" : "From image"}</span>
+              <span className="min-[380px]:hidden">{logoBusy ? "…" : "Image"}</span>
+            </button>
             <button
               type="button"
               onClick={() => {
