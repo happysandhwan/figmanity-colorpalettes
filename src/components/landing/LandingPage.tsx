@@ -229,10 +229,10 @@ export function LandingPage() {
 
         gsap.utils.toArray<HTMLElement>(".reveal-block").forEach((el) => {
           gsap.from(el, {
-            opacity: 0,
             y: 56,
             duration: 0.85,
             ease: "power3.out",
+            clearProps: "transform",
             scrollTrigger: {
               trigger: el,
               start: "top 88%",
@@ -244,12 +244,12 @@ export function LandingPage() {
 
         gsap.utils.toArray<HTMLElement>(".palette-card").forEach((card, i) => {
           gsap.from(card, {
-            opacity: 0,
             y: 40,
             rotateX: -6,
             duration: 0.9,
             delay: i * 0.06,
             ease: "power3.out",
+            clearProps: "transform",
             scrollTrigger: {
               trigger: card,
               start: "top 90%",
@@ -261,11 +261,11 @@ export function LandingPage() {
 
         gsap.utils.toArray<HTMLElement>(".trending-card").forEach((card, i) => {
           gsap.from(card, {
-            opacity: 0,
             y: 36,
             duration: 0.75,
             delay: i * 0.04,
             ease: "power3.out",
+            clearProps: "transform",
             scrollTrigger: {
               trigger: card,
               start: "top 88%",
@@ -276,10 +276,10 @@ export function LandingPage() {
         });
 
         gsap.from(".generate-panel", {
-          opacity: 0,
           y: 48,
           duration: 0.9,
           ease: "power3.out",
+          clearProps: "transform",
           scrollTrigger: {
             trigger: ".generate-section",
             start: "top 86%",
@@ -289,10 +289,10 @@ export function LandingPage() {
         });
 
         gsap.from(".category-section-inner", {
-          opacity: 0,
           y: 40,
           duration: 0.85,
           ease: "power3.out",
+          clearProps: "transform",
           scrollTrigger: {
             trigger: ".category-section",
             start: "top 88%",
@@ -302,11 +302,13 @@ export function LandingPage() {
         });
 
         gsap.from(".feature-pill", {
-          opacity: 0,
-          y: 24,
+          // Same class of bug as hero bento: animating opacity here can leave the
+          // first pill stuck invisible while the grid still reserves column 1.
+          y: 26,
           stagger: 0.08,
           duration: 0.65,
           ease: "power2.out",
+          clearProps: "transform",
           scrollTrigger: {
             trigger: ".feature-grid",
             start: "top 85%",
@@ -317,9 +319,10 @@ export function LandingPage() {
 
         gsap.from(".cta-glow", {
           scale: 0.92,
-          opacity: 0,
+          y: 20,
           duration: 1,
           ease: "power2.out",
+          clearProps: "transform",
           scrollTrigger: {
             trigger: ".cta-section",
             start: "top 80%",
@@ -700,46 +703,135 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="reveal-block px-4 py-12 sm:px-5 sm:py-16 md:px-8">
-        <div className="mx-auto max-w-4xl rounded-2xl border border-white/[0.08] bg-[linear-gradient(135deg,rgba(139,92,246,0.12),rgba(34,211,238,0.08))] p-6 text-center sm:rounded-3xl sm:p-10 md:p-14">
-          <p className="font-[family-name:var(--font-display)] text-xl font-bold leading-snug sm:text-2xl md:text-3xl">
-            “Finally — color that doesn’t fight the product. It’s the first tab I pin.”
-          </p>
-          <p className="mt-6 text-sm text-zinc-500">— Design leads who are tired of guessing</p>
-        </div>
-      </section>
+      <section
+        id="cta"
+        className="cta-section relative scroll-mt-28 overflow-hidden border-t border-white/[0.05] px-4 pb-[max(7rem,env(safe-area-inset-bottom,0px)+4rem)] pt-14 sm:px-5 sm:pt-16 md:scroll-mt-24 md:px-8 md:pt-20"
+        aria-labelledby="cta-heading"
+      >
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_90%_60%_at_50%_-20%,rgba(139,92,246,0.18),transparent_55%),radial-gradient(ellipse_70%_50%_at_100%_60%,rgba(34,211,238,0.1),transparent_45%),radial-gradient(ellipse_60%_45%_at_0%_80%,rgba(244,114,182,0.08),transparent_40%)]"
+          aria-hidden
+        />
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" aria-hidden />
 
-      <section id="cta" className="cta-section scroll-mt-28 px-4 pb-[max(7rem,env(safe-area-inset-bottom,0px)+4rem)] pt-8 sm:px-5 md:scroll-mt-24 md:px-8">
-        <div className="cta-glow relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-[#0c0c10] p-[1px] sm:rounded-[2rem]">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#456990]/35 via-[#EF767A]/18 to-[#49DCB1]/28 blur-3xl" />
-          <div className="relative rounded-2xl bg-[#0a0a0f] px-5 py-10 text-center sm:rounded-[2rem] sm:px-8 sm:py-14 md:px-16 md:py-20">
-            <h2 className="font-[family-name:var(--font-display)] text-[clamp(1.65rem,6vw,3rem)] font-extrabold tracking-tight md:text-5xl">
-              Ready to never leave?
-            </h2>
-            <p className="mx-auto mt-5 max-w-lg text-zinc-400">
-              Join the waitlist — we’re polishing the full palette OS. Early birds get lifetime
-              perks.
-            </p>
-            <form
-              className="mx-auto mt-10 flex max-w-md flex-col gap-3 sm:flex-row"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@studio.com"
-                className="hover-smooth h-14 flex-1 rounded-full border border-white/10 bg-white/[0.04] px-5 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none ring-0 focus:border-[#49BEAA]/55 hover:border-white/18"
-              />
-              <button
-                type="submit"
-                className="hover-smooth h-14 shrink-0 rounded-full bg-white px-8 text-sm font-semibold text-zinc-950 hover:bg-zinc-200 active:scale-[0.98]"
+        <div className="reveal-block relative mx-auto max-w-5xl">
+          <div className="relative overflow-hidden rounded-[1.65rem] border border-white/[0.1] bg-[#08080c]/95 shadow-[0_40px_100px_-48px_rgba(0,0,0,0.85)] backdrop-blur-md sm:rounded-[2rem]">
+            <div
+              className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-violet-600/20 blur-3xl"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute -bottom-28 -left-16 h-56 w-56 rounded-full bg-cyan-500/12 blur-3xl"
+              aria-hidden
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(165deg,rgba(255,255,255,0.04)_0%,transparent_42%,transparent_58%,rgba(0,0,0,0.35)_100%)]" aria-hidden />
+
+            <div className="relative px-5 py-10 sm:px-10 sm:py-12 md:px-14 md:py-14">
+              <div className="mb-8 flex flex-wrap items-center justify-center gap-3 sm:justify-between">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/90">
+                  Voices from the bench
+                </p>
+                <div className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-black/40 px-2.5 py-1.5">
+                  {["#8b5cf6", "#d946ef", "#22d3ee", "#34d399", "#fbbf24"].map((hex) => (
+                    <span
+                      key={hex}
+                      className="h-2 w-2 rounded-full ring-1 ring-white/15 sm:h-2.5 sm:w-2.5"
+                      style={{ backgroundColor: hex }}
+                      aria-hidden
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <blockquote className="relative mx-auto max-w-3xl text-center">
+                <span
+                  className="pointer-events-none absolute -left-1 -top-2 font-[family-name:var(--font-display)] text-[4.5rem] leading-none text-white/[0.06] sm:-left-2 sm:-top-4 sm:text-[6rem]"
+                  aria-hidden
+                >
+                  “
+                </span>
+                <p className="relative font-[family-name:var(--font-display)] text-[clamp(1.15rem,3.8vw,1.85rem)] font-bold leading-snug tracking-tight text-zinc-50 sm:leading-snug">
+                  Finally — color that doesn’t fight the product. It’s the first tab I pin.
+                </p>
+                <footer className="mt-8 flex flex-col items-center gap-3 border-t border-white/[0.07] pt-8 sm:flex-row sm:justify-center sm:gap-4">
+                  <span
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.04] text-violet-200/90"
+                    aria-hidden
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M6 4h12v17l-6-4-6 4V4z" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <div className="text-center sm:text-left">
+                    <cite className="not-italic text-sm font-medium text-zinc-300">Design leads</cite>
+                    <p className="text-xs text-zinc-500">Who are tired of guessing</p>
+                  </div>
+                </footer>
+              </blockquote>
+            </div>
+          </div>
+
+          <div className="relative flex flex-col items-center py-6 sm:py-8" aria-hidden>
+            <div className="h-px w-full max-w-xs bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <div className="absolute top-1/2 flex -translate-y-1/2 items-center gap-2 rounded-full border border-white/10 bg-[#060607] px-3 py-1">
+              <span className="h-1 w-1 rounded-full bg-violet-400/80" />
+              <span className="h-1 w-1 rounded-full bg-fuchsia-400/70" />
+              <span className="h-1 w-1 rounded-full bg-cyan-400/80" />
+            </div>
+          </div>
+
+          <div className="cta-glow relative overflow-hidden rounded-[1.65rem] border border-white/[0.12] bg-[#0c0c10] p-[1px] shadow-[0_32px_90px_-40px_rgba(99,102,241,0.35)] sm:rounded-[2rem]">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#456990]/30 via-[#7c3aed]/20 to-[#49DCB1]/25 blur-3xl" aria-hidden />
+            <div className="relative rounded-[1.6rem] bg-[#07070b]/98 px-5 py-10 text-center sm:rounded-[1.95rem] sm:px-8 sm:py-12 md:px-14 md:py-16">
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.26em] text-[#49DCB1]/90">
+                Early access
+              </p>
+              <h2
+                id="cta-heading"
+                className="font-[family-name:var(--font-display)] text-[clamp(1.6rem,5.5vw,2.85rem)] font-extrabold tracking-tight text-white md:text-[2.95rem]"
               >
-                Join waitlist
-              </button>
-            </form>
+                Ready to never leave?
+              </h2>
+              <p className="mx-auto mt-5 max-w-lg text-pretty text-sm leading-relaxed text-zinc-400 sm:text-base">
+                Join the waitlist — we’re polishing the full palette OS. Early birds get lifetime
+                perks.
+              </p>
+
+              <ul className="mx-auto mt-8 flex max-w-xl flex-wrap justify-center gap-2 text-[11px] font-medium text-zinc-500 sm:gap-3 sm:text-xs">
+                {["No spam", "Figma-first workflow", "Unsubscribe anytime"].map((t) => (
+                  <li
+                    key={t}
+                    className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-zinc-400"
+                  >
+                    {t}
+                  </li>
+                ))}
+              </ul>
+
+              <form
+                className="mx-auto mt-10 flex w-full max-w-lg flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-3"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="you@studio.com"
+                  className="hover-smooth h-14 min-h-[3.5rem] w-full flex-1 rounded-2xl border border-white/12 bg-white/[0.05] px-5 text-sm text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] placeholder:text-zinc-600 outline-none ring-0 transition-shadow focus:border-[#49BEAA]/50 focus:shadow-[0_0_0_3px_rgba(73,190,170,0.15),inset_0_1px_0_rgba(255,255,255,0.06)] sm:rounded-full"
+                />
+                <button
+                  type="submit"
+                  className="hover-smooth h-14 min-h-[3.5rem] w-full shrink-0 rounded-2xl bg-white px-8 text-sm font-semibold text-zinc-950 shadow-[0_12px_40px_-12px_rgba(255,255,255,0.25)] hover:bg-zinc-100 active:scale-[0.98] sm:w-auto sm:rounded-full"
+                >
+                  Join waitlist
+                </button>
+              </form>
+              <p className="mt-5 text-[11px] text-zinc-600">
+                We respect your inbox — one launch note when we open the doors.
+              </p>
+            </div>
           </div>
         </div>
       </section>
