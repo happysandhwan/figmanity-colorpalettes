@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Reorder, useDragControls } from "framer-motion";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { extractDominantHexesFromFile } from "@/lib/extractImagePalette";
@@ -348,6 +349,18 @@ export function CoolorsPaletteGenerator({ className }: CoolorsPaletteGeneratorPr
             >
               Color theory
             </button>
+            <Link
+              href="/logo-preview"
+              className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-2 text-[11px] font-medium text-zinc-200 transition-colors hover:border-white/20 hover:bg-white/[0.08] sm:px-3.5 sm:text-xs"
+            >
+              Logo lab
+            </Link>
+            <Link
+              href="/brand-mockups"
+              className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-2 text-[11px] font-medium text-zinc-200 transition-colors hover:border-white/20 hover:bg-white/[0.08] sm:px-3.5 sm:text-xs"
+            >
+              Mockups
+            </Link>
             <div className="inline-flex items-stretch rounded-full border border-white/10 bg-zinc-900/70 p-0.5 backdrop-blur-sm">
               <button
                 type="button"

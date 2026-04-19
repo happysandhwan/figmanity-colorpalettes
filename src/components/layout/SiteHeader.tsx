@@ -7,6 +7,8 @@ const MOBILE_LINKS = [
   { href: "/#trending", label: "Trending" },
   { href: "/#generate", label: "Generate" },
   { href: "/generator", label: "Palette Lab" },
+  { href: "/logo-preview", label: "Logo lab" },
+  { href: "/brand-mockups", label: "Brand mockups" },
   { href: "/categories", label: "Categories" },
   { href: "/#palettes", label: "Palettes" },
   { href: "/#features", label: "Why here" },
@@ -85,6 +87,12 @@ export function SiteHeader() {
               </Link>
               <Link className="hover-smooth hover:text-zinc-100" href="/generator">
                 Palette Lab
+              </Link>
+              <Link className="hover-smooth hover:text-zinc-100" href="/logo-preview">
+                Logo lab
+              </Link>
+              <Link className="hover-smooth hover:text-zinc-100" href="/brand-mockups">
+                Brand mockups
               </Link>
               <Link className="hover-smooth hover:text-zinc-100" href="/categories">
                 Categories
