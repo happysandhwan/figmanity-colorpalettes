@@ -6,7 +6,7 @@ import { useEffect, useId, useState } from "react";
 const MOBILE_LINKS = [
   { href: "/#trending", label: "Trending" },
   { href: "/#generate", label: "Generate" },
-  { href: "/generator", label: "Fullscreen lab" },
+  { href: "/generator", label: "Palette Lab" },
   { href: "/categories", label: "Categories" },
   { href: "/#palettes", label: "Palettes" },
   { href: "/#features", label: "Why here" },
@@ -84,7 +84,7 @@ export function SiteHeader() {
                 Generate
               </Link>
               <Link className="hover-smooth hover:text-zinc-100" href="/generator">
-                Fullscreen
+                Palette Lab
               </Link>
               <Link className="hover-smooth hover:text-zinc-100" href="/categories">
                 Categories
