@@ -1,26 +1,217 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #060607;
+  --bg-elevated: #0e0e12;
+  --fg: #f4f4f5;
+  --muted: #a1a1aa;
+  --accent-a: #8b5cf6;
+  --accent-b: #f472b6;
+  --accent-c: #22d3ee;
+  --ring: color-mix(in oklab, var(--accent-a) 35%, transparent);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-heading);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow-x: hidden;
+  /* Avoid horizontal notch clipping without shifting centered max-width layouts */
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent-a) 45%, transparent);
+  color: var(--fg);
+}
+
+/* Subtle film grain */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Mask for line reveals */
+.clip-reveal {
+  clip-path: inset(0 0 0 0);
+}
+
+@layer utilities {
+  /**
+   * Longer, ease-out-expo style transitions for hovers (buttons, links, cards).
+   */
+  .hover-smooth {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color,
+      box-shadow, transform, opacity, filter, backdrop-filter, fill, stroke;
+    transition-duration: 0.52s;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /**
+   * Color-strip swatches: smooth flex + opacity when expanding on hover.
+   */
+  .hover-swatch {
+    transition-property: flex-grow, flex-basis, flex, opacity, transform, filter;
+    transition-duration: 0.55s;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hover-smooth {
+      transition-duration: 0.16s;
+    }
+
+    .hover-swatch {
+      transition-duration: 0.2s;
+    }
+  }
+}
+
+/* Hero: subtle grid + gradient headline shimmer */
+.hero-grid-lines {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, black 15%, transparent 72%);
+}
+
+@keyframes hero-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.hero-shimmer {
+  background-size: 200% 120%;
+  animation: hero-shimmer 10s ease-in-out infinite;
+}
+
+/* Hero ambient visuals — slow drifting blobs (disabled when reduced motion) */
+@keyframes hero-blob-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(12%, -6%) scale(1.08);
+    opacity: 0.7;
+  }
+}
+
+@keyframes hero-blob-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.02);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(-10%, 10%) scale(0.94);
+    opacity: 0.6;
+  }
+}
+
+@keyframes hero-blob-c {
+  0%,
+  100% {
+    transform: translate(-6%, 4%) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(14%, -4%) scale(1.06);
+    opacity: 0.55;
+  }
+}
+
+.hero-blob-a {
+  animation: hero-blob-a 18s ease-in-out infinite;
+}
+
+.hero-blob-b {
+  animation: hero-blob-b 14s ease-in-out infinite reverse;
+}
+
+.hero-blob-c {
+  animation: hero-blob-c 22s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob-a,
+  .hero-blob-b,
+  .hero-blob-c {
+    animation: none;
+  }
+}
+
+/* Seed color picker: range sliders (hue / saturation / lightness) */
+@layer components {
+  .seed-hsl-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 0.5rem;
+    width: 100%;
+    border-radius: 9999px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .seed-hsl-slider::-webkit-slider-runnable-track {
+    height: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .seed-hsl-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    margin-top: -0.3125rem;
+    cursor: grab;
+  }
+
+  .seed-hsl-slider:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+
+  .seed-hsl-slider::-moz-range-track {
+    height: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .seed-hsl-slider::-moz-range-thumb {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    cursor: grab;
+  }
 }
